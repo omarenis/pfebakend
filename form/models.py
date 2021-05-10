@@ -7,7 +7,7 @@ class Domain(Model):
     name = TextField(null=False)
 
     class Meta:
-        db_table = 'domain'
+        db_table = 'domains'
 
 
 class AgeRange(Model):
@@ -16,7 +16,7 @@ class AgeRange(Model):
     maximumAge = IntegerField(db_column='maximum_age')
 
     class Meta:
-        db_table = 'age_range'
+        db_table = 'age_ranges'
 
 
 class Question(Model):
@@ -25,7 +25,7 @@ class Question(Model):
     domain = ForeignKey(Domain, db_column='domain', on_delete=CASCADE, null=True)
 
     class Meta:
-        db_table = 'question'
+        db_table = 'questions'
         unique_together = (('label', 'ageRange', 'domain'),)
 
 
@@ -35,17 +35,16 @@ class Patient(Model):
     age = IntegerField(null=False)
 
     class Meta:
-        db_table = 'patient'
+        db_table = 'patients'
 
 
 class Response(Model):
-    question = ForeignKey(Question, on_delete=CASCADE)
-    patient = ForeignKey(Patient, on_delete=CASCADE)
+    question = ForeignKey(to=Question, on_delete=CASCADE, null=False)
+    patient = ForeignKey(to=Patient, on_delete=CASCADE, null=False)
     value = BooleanField(null=False)
 
     class Meta:
-        db_table = 'response'
-        unique_together = (('question', 'patient'),)
+        db_table = 'responses'
 
 
 class Score(Model):
@@ -54,7 +53,7 @@ class Score(Model):
     value = IntegerField(null=False, default=0)
 
     class Meta:
-        db_table = 'score'
+        db_table = 'scores'
         unique_together = (('domain', 'patient'),)
 
 

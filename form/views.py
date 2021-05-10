@@ -148,7 +148,7 @@ class ResponseViewSet(ModelViewSet):
             return Response(data={'error': 'question must be provided'}, status=400)
         if request.data.get('patient') is None:
             return Response(data={'error': 'patient must be provided'}, status=400)
-        if request.data.value('value') is None:
+        if request.data.get('value') is None:
             return Response(data={'error': 'value must be provided'}, status=400)
         response_data = dict(question_id=request.data.get('question'), patient_id=request.data.get('patient'),
                              value=request.data.get('value'))
@@ -173,7 +173,7 @@ class ScoreViewSet(ModelViewSet):
         score_list = self.service.list()
         if len(score_list) == 0:
             return Response(data={'response': 'pas de scores dans ce moment'}, status=200)
-        return Response(data=[DomainSerializer(i).data for i in score_list], status=200)
+        return Response(data=[ScoreSerializer(i).data for i in score_list], status=200)
 
     def retrieve(self, request, pk=None, *args, **kwargs):
         score_object = self.service.retrieve(pk)
@@ -183,13 +183,14 @@ class ScoreViewSet(ModelViewSet):
         return Response(data=ScoreSerializer(score_object).data, status=200)
 
     def create(self, request, *args, **kwargs):
+        print(request.data)
         if request.data.get("domain") is None:
             return Response(data={'error': 'domain must be provided'}, status=400)
         if request.data.get('patient') is None:
             return Response(data={'error': 'patient must be provided'}, status=400)
-        if request.data.value('value') is None:
+        if request.data.get('value') is None:
             return Response(data={'error': 'value must be provided'}, status=400)
-        score_data = dict(domain_id=request.data.get('question'), patient_id=request.data.get('patient'),
+        score_data = dict(domain_id=request.data.get('domain'), patient_id=request.data.get('patient'),
                           value=request.data.get('value'))
         score_object = self.service.create(score_data)
         if isinstance(score_object, Exception):
@@ -228,7 +229,7 @@ responses = ResponseViewSet.as_view({
     'get': 'list',
     'post': 'create'
 })
-scores = ResponseViewSet.as_view({
+scores = ScoreViewSet.as_view({
     'get': 'list',
     'post': 'create'
 })
