@@ -50,7 +50,7 @@ class Response(Model):
 class Score(Model):
     patient = ForeignKey(to=Patient, on_delete=CASCADE, null=False)
     domain = ForeignKey(to=Domain, on_delete=CASCADE, null=False)
-    score = IntegerField(null=False, default=0)
+    value = IntegerField(null=False, default=0)
 
     class Meta:
         db_table = 'score'
@@ -88,7 +88,7 @@ class ResponseSerializer(ModelSerializer):
 class ScoreSerializer(ModelSerializer):
     class Meta:
         model = Score
-        fields = ['id', 'score']
+        fields = ['id', 'value', 'domain', 'patient']
 
 
 class PatientSerializer(ModelSerializer):

@@ -2,8 +2,8 @@ from django.urls import path
 from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet
 
-from .models import DomainSerializer, PatientSerializer, QuestionSerializer, ResponseSerializer
-from .services import AgeRangeService, DomainService, PatientService, QuestionService, ResponseService
+from .models import DomainSerializer, PatientSerializer, QuestionSerializer, ResponseSerializer, ScoreSerializer
+from .services import AgeRangeService, DomainService, PatientService, QuestionService, ResponseService, ScoreService
 
 
 class PatientViewSet(ModelViewSet):
@@ -164,6 +164,45 @@ class ResponseViewSet(ModelViewSet):
         return Response(data={'response': True}, status=200)
 
 
+class ScoreViewSet(ModelViewSet):
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+        self.service = ScoreService()
+
+    def list(self, request, *args, **kwargs):
+        score_list = self.service.list()
+        if len(score_list) == 0:
+            return Response(data={'response': 'pas de scores dans ce moment'}, status=200)
+        return Response(data=[DomainSerializer(i).data for i in score_list], status=200)
+
+    def retrieve(self, request, pk=None, *args, **kwargs):
+        score_object = self.service.retrieve(pk)
+        print(score_object)
+        if score_object is None:
+            return Response(data={'error': 'score not found'}, status=404)
+        return Response(data=ScoreSerializer(score_object).data, status=200)
+
+    def create(self, request, *args, **kwargs):
+        if request.data.get("domain") is None:
+            return Response(data={'error': 'domain must be provided'}, status=400)
+        if request.data.get('domain') is None:
+            return Response(data={'error': 'patient must be provided'}, status=400)
+        if request.data.value('value') is None:
+            return Response(data={'error': 'value must be provided'}, status=400)
+        score_data = dict(domain_id=request.data.get('question'), patient_id=request.data.get('patient'),
+                             value=request.data.get('value'))
+        score_object = self.service.create(score_data)
+        if isinstance(score_object, Exception):
+            return Response(data={'error': str(score_object)}, status=500)
+        return Response(data=ScoreSerializer(score_object).data, status=201)
+
+    def delete(self, request, pk=None, *args, **kwargs):
+        deleted = self.service.delete(_id=pk)
+        if isinstance(deleted, Exception):
+            return Response(data={'error': str(deleted)}, status=400)
+        return Response(data={'response': True}, status=200)
+
+
 questions = QuestionViewSet.as_view({
     'get': 'list',
     'post': 'create'
@@ -189,6 +228,10 @@ responses = ResponseViewSet.as_view({
     'get': 'list',
     'post': 'create'
 })
+scores = ResponseViewSet.as_view({
+    'get': 'list',
+    'post': 'create'
+})
 
 urlpatterns = [
     path('questions', questions),
@@ -196,5 +239,6 @@ urlpatterns = [
     path('patients', patients),
     path('domains', domains),
     path('domains/<int:pk>', domain),
-    path('responses', responses)
+    path('responses', responses),
+    path('scores', scores)
 ]
