@@ -20,12 +20,13 @@ class AgeRange(Model):
 
 
 class Question(Model):
-    label = TextField(null=False, unique=True)
+    label = TextField(null=False)
     ageRange = ForeignKey(AgeRange, db_column='age_range', on_delete=CASCADE, null=True)
     domain = ForeignKey(Domain, db_column='domain', on_delete=CASCADE, null=True)
 
     class Meta:
         db_table = 'question'
+        unique_together = (('label', 'ageRange', 'domain'),)
 
 
 class Patient(Model):
