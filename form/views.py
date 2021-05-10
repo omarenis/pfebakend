@@ -185,12 +185,12 @@ class ScoreViewSet(ModelViewSet):
     def create(self, request, *args, **kwargs):
         if request.data.get("domain") is None:
             return Response(data={'error': 'domain must be provided'}, status=400)
-        if request.data.get('domain') is None:
+        if request.data.get('patient') is None:
             return Response(data={'error': 'patient must be provided'}, status=400)
         if request.data.value('value') is None:
             return Response(data={'error': 'value must be provided'}, status=400)
         score_data = dict(domain_id=request.data.get('question'), patient_id=request.data.get('patient'),
-                             value=request.data.get('value'))
+                          value=request.data.get('value'))
         score_object = self.service.create(score_data)
         if isinstance(score_object, Exception):
             return Response(data={'error': str(score_object)}, status=500)
