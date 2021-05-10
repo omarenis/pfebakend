@@ -10,10 +10,13 @@ class Repository(object):
         return self.model.objects.all()
 
     def retrieve(self, _id: int):
-        return self.model.objects.get(_id=id)
+        return self.model.objects.get(id=_id)
 
     def create(self, data: dict):
-        return self.model.objects.create(**data)
+        try:
+            return self.model.objects.create(**data)
+        except Exception as exception:
+            return exception
 
     def delete(self, _id: int):
         try:
@@ -53,6 +56,10 @@ class AgeRangeRepository(Repository):
     def __init__(self):
         super().__init__(model=AgeRange)
 
+    @staticmethod
+    def get_age_range_by_age(age: int):
+        return AgeRange.objects.filter(minimumAge__lte=age, maximumAge__gt=age).first()
+
 
 class Service(object):
 
@@ -81,6 +88,12 @@ class AgeRangeService(Service):
     def __init__(self, repository=AgeRangeRepository()):
         super().__init__(repository=repository)
 
+    def retrieve(self, _id: int = None, age: int = None):
+        if age is None and _id is not None:
+            return self.repository.retrieve(_id)
+        else:
+            return self.repository.get_age_range_by_age(age)
+
 
 class ScoreService(Service):
     def __init__(self, repository=ScoreRepository()):
@@ -95,4 +108,9 @@ class PatientService(Service):
 
 class ResponseService(Service):
     def __init__(self, repository=ResponseRepository()):
+        super().__init__(repository)
+
+
+class QuestionService(Service):
+    def __init__(self, repository=QuestionRepository()):
         super().__init__(repository)

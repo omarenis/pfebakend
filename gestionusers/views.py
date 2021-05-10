@@ -111,9 +111,9 @@ login = PersonController.as_view({
 signup = PersonController.as_view({
     'post': 'signup'
 })
-urls = [
-    path('users', users_list),
-    path('users/<int:user_id>', user_retrieve_update_delete),
+urlpatterns = [
+    path('', users_list),
+    path('<int:user_id>', user_retrieve_update_delete),
     path('login', login),
     path('signup', signup)
 ]

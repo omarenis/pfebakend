@@ -20,7 +20,7 @@ class AgeRange(Model):
 
 
 class Question(Model):
-    label = TextField(null=False)
+    label = TextField(null=False, unique=True)
     ageRange = ForeignKey(AgeRange, db_column='age_range', on_delete=CASCADE, null=True)
     domain = ForeignKey(Domain, db_column='domain', on_delete=CASCADE, null=True)
 
@@ -30,7 +30,7 @@ class Question(Model):
 
 class Patient(Model):
     blockId = TextField(unique=True, null=True, db_column='block_id')
-    person = ForeignKey(to=Person, on_delete=CASCADE, db_column='person')
+    person = ForeignKey(to=Person, on_delete=CASCADE, db_column='person', null=True)
     age = IntegerField(null=False)
 
     class Meta:
@@ -60,7 +60,7 @@ class Score(Model):
 class QuestionSerializer(ModelSerializer):
     class Meta:
         model = Question
-        fields = ['id', 'label']
+        fields = ['id', 'label', 'ageRange', 'domain']
 
 
 class DomainSerializer(ModelSerializer):
@@ -82,6 +82,7 @@ class AgeRangeSerializer(ModelSerializer):
 class ResponseSerializer(ModelSerializer):
     class Meta:
         model = Response
+        fields = ['id', 'patient_id', 'question_id', 'value']
 
 
 class ScoreSerializer(ModelSerializer):
