@@ -105,6 +105,7 @@ class ScoreService(Service):
         else:
             return self.repository.model.objects.filter(patient_id=patientId)
 
+
 class PatientService(Service):
     def __init__(self, repository=PatientRepository()):
         super().__init__(repository=repository)

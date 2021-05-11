@@ -1,5 +1,5 @@
 from .models import Speciality, Person
-import django.contrib.auth.password_validation as validators
+from django.contrib.auth.hashers import check_password
 
 
 class SpecialityRepository(object):
@@ -109,8 +109,9 @@ class PersonService(object):
     def login(email, password):
         user = Person.objects.filter(email=email).first()
         if user is not None:
-            try:
-                validators.validate_password(password=password, user=user)
+            if check_password(password=password, encoded=user.password):
                 return user
-            except Exception as exception:
-                return exception
+            else:
+                return Exception('كلمة السر غير صحيحة')
+        else:
+            return Exception('الحساب غير موجود')

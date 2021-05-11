@@ -76,24 +76,25 @@ class PersonController(ModelViewSet):
             return Response(data={"error": "password not found"}, status=400)
         user = self.person_service.login(email, password)
         if isinstance(user, Exception):
-            return Response(data={"error": "password incorrect"}, status=403)
+            return Response(data={"error": str(user)}, status=500)
         token = RefreshToken.for_user(user=user)
         return Response(data={
             "access": str(token.access_token),
             "refresh": str(token),
-            "user_id": user.id
+            "userId": user.id
         })
 
     def signup(self, request):
         user = self.person_service.add(request.data)
         if isinstance(user, Exception):
+            print(user)
             return Response(data={"error": str(user)}, status=500)
         else:
             token = RefreshToken.for_user(user=user)
             return Response(data={
                 "access": str(token.access_token),
                 "refresh": str(token),
-                "user_id": user.id
+                "userId": user.id
             })
 
 
