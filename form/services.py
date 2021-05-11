@@ -99,6 +99,11 @@ class ScoreService(Service):
     def __init__(self, repository=ScoreRepository()):
         super().__init__(repository)
 
+    def list(self, patientId=None):
+        if patientId is None:
+            return super().list()
+        else:
+            return self.repository.model.objects.filter(patient_id=patientId)
 
 class PatientService(Service):
     def __init__(self, repository=PatientRepository()):

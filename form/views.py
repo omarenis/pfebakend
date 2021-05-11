@@ -170,7 +170,7 @@ class ScoreViewSet(ModelViewSet):
         self.service = ScoreService()
 
     def list(self, request, *args, **kwargs):
-        score_list = self.service.list()
+        score_list = self.service.list(request.GET.get('patientId'))
         if len(score_list) == 0:
             return Response(data={'response': 'pas de scores dans ce moment'}, status=200)
         return Response(data=[ScoreSerializer(i).data for i in score_list], status=200)
