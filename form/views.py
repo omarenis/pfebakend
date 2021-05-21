@@ -1,13 +1,11 @@
 from django.urls import path
 from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet
-
 from .models import DomainSerializer, PatientSerializer, QuestionSerializer, ResponseSerializer, ScoreSerializer
 from .services import AgeRangeService, DomainService, PatientService, QuestionService, ResponseService, ScoreService
 
 
 class PatientViewSet(ModelViewSet):
-    serializer_class = PatientSerializer
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
@@ -23,21 +21,15 @@ class PatientViewSet(ModelViewSet):
         if request.data.get('age') is None:
             return Response(data={'error': 'patient has age'}, status=400)
         else:
-            patient = dict()
-            print(request.data)
-            patient['age'] = request.data.get('age')
-            if request.data.get('person') is not None:
-                patient['person_id'] = request.data.get('person')
-            patient_object = self.service.create(patient)
+            patient_object = self.service.create(
+                {
+                    'age': request.data.get('age'),
+                    'person_id': request.data.get('person_id')
+                }
+            )
             if isinstance(patient_object, Exception):
                 return Response(data={'error': str(patient_object)}, status=500)
-            return Response(data=PatientSerializer(self.service.create(patient)).data, status=201)
-    #
-    # def retrieve(self, request, id=None, *args, **kwargs):
-    #     if id is None:
-    #         return Response(data={'error': 'you have to put an id to find the patient'})
-    #     else:
-    #
+            return Response(data=PatientSerializer(patient_object).data, status=201)
 
 
 class QuestionViewSet(ModelViewSet):
@@ -86,7 +78,6 @@ class QuestionViewSet(ModelViewSet):
 
 
 class DomainViewSet(ModelViewSet):
-
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         self.domain_service = DomainService()
@@ -95,12 +86,11 @@ class DomainViewSet(ModelViewSet):
     def list(self, request, *args, **kwargs):
         domain_list = self.domain_service.list()
         if len(domain_list) == 0:
-            return Response(data={'response': 'pas de questions dans ce moment'}, status=200)
+            return Response(data={'response': 'pas de domaines dans ce moment'}, status=200)
         return Response(data=[DomainSerializer(i).data for i in domain_list], status=200)
 
     def retrieve(self, request, pk=None, *args, **kwargs):
         domain_object = self.domain_service.retrieve(pk)
-        print(domain_object)
         if domain_object is None:
             return Response(data={'error': 'domain not found'}, status=404)
         age = request.GET.get('age')

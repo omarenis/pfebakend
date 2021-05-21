@@ -1,6 +1,6 @@
 from django.contrib.auth.models import AbstractUser
 from django.contrib.auth.base_user import BaseUserManager
-from django.db.models import CharField, EmailField, Model, TextField
+from django.db.models import CharField, EmailField, ImageField, Model, TextField
 from rest_framework.serializers import ModelSerializer
 
 
@@ -21,7 +21,7 @@ class UserManager(BaseUserManager):
 class Speciality(Model):
     title = TextField(unique=True)
     description = TextField(null=True)
-    photo = TextField(null=True)
+    photo = ImageField(null=True, upload_to='images')
 
     class Meta:
         db_table = 'specialities'

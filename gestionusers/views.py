@@ -1,4 +1,5 @@
 from django.urls import path
+from rest_framework import status
 from rest_framework.permissions import AllowAny, IsAdminUser, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet
@@ -7,9 +8,9 @@ from .services import PersonService, SpecialityService
 from rest_framework_simplejwt.tokens import RefreshToken
 
 
-class SpecialityController(ModelViewSet):
-    def __init__(self, **kwargs):
-        super().__init__(**kwargs)
+class SpecialityViewSet(ModelViewSet):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
         self.speciality_serializer = SpecialitySerializer
         self.speciality_service = SpecialityService()
 
@@ -17,8 +18,8 @@ class SpecialityController(ModelViewSet):
         speciality_list = self.speciality_service.list()
         response = []
         if len(speciality_list) != 0:
-            for i in self.speciality_service.list():
-                response.append(self.speciality_serializer(data=i).data)
+            for i in speciality_list:
+                response.append(self.speciality_serializer(i).data)
         return Response(data=response, status=200)
 
     def retrieve(self, request, pk=None, *args, **kwargs):
@@ -29,16 +30,30 @@ class SpecialityController(ModelViewSet):
             return Response(data=self.speciality_serializer(data=speciality).data, status=200)
 
     def create(self, request, *args, **kwargs):
+        print(request.data.get('title'))
+        print(request.FILES.getlist('photo')[0])
         if request.data.get('title') is None:
             return Response(data={'error': 'title required'}, status=500)
         if request.data.get('description') is None:
             return Response(data={'error': 'description required'}, status=500)
-        if request.data.get('image') is None:
-            return Response(data={'error': 'image required'}, status=500)
-        return SpecialitySerializer(self.speciality_service.create(request.data)).data
+        if request.FILES.getlist('photo') is None:
+            return Response(data={'error': 'photo required'}, status=500)
+        request.data['photo'] = request.FILES.getlist('photo')[0]
+        speciality_object = self.speciality_service.create(request.data)
+        if isinstance(speciality_object, Exception):
+            return Response(data={'error': str(speciality_object)}, status=500)
+        else:
+            return Response(data=SpecialitySerializer(speciality_object).data, status=201)
+
+    def delete(self, request, pk=None, *args, **kwargs):
+        try:
+            self.speciality_service.delete(speciality_id=pk)
+            return Response(data={'response': True}, status=status.HTTP_200_OK)
+        except Exception as exception:
+            return Response(data={'error': str(exception)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
-class PersonController(ModelViewSet):
+class PersonViewSet(ModelViewSet):
     def get_permissions(self):
         permission_classes = []
         if self.action == 'list':
@@ -98,23 +113,32 @@ class PersonController(ModelViewSet):
             })
 
 
-users_list = PersonController.as_view({
+users_list = PersonViewSet.as_view({
     'get': 'list',
     'post': 'create'
 })
 
-user_retrieve_update_delete = PersonController.as_view({
+user_retrieve_update_delete = PersonViewSet.as_view({
     'delete': 'delete'
 })
-login = PersonController.as_view({
+login = PersonViewSet.as_view({
     'post': 'login'
 })
-signup = PersonController.as_view({
+signup = PersonViewSet.as_view({
     'post': 'signup'
 })
+specialties = SpecialityViewSet.as_view({
+    'get': 'list',
+    'post': 'create'
+})
+specialty = SpecialityViewSet.as_view({
+    'delete': 'delete'
+})
 urlpatterns = [
-    path('', users_list),
-    path('<int:user_id>', user_retrieve_update_delete),
-    path('login', login),
-    path('signup', signup)
+    path('users', users_list),
+    path('users/<int:user_id>', user_retrieve_update_delete),
+    path('users/login', login),
+    path('users/signup', signup),
+    path('specialties', specialties),
+    path('specialties/<int:speciality_id>', specialty)
 ]

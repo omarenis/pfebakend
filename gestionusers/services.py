@@ -10,17 +10,16 @@ class SpecialityRepository(object):
 
     @staticmethod
     def retrieve(speciality_id):
-        return Speciality.objects.get(speciality_id)
+        return Speciality.objects.get(id=speciality_id)
 
     @staticmethod
     def create(speciality: dict):
-        speciality_object = Speciality(name=speciality['name'], description=speciality.get('description'))
-        speciality_object.save()
-        return speciality_object
+        print(speciality.get('title'))
+        return Speciality.objects.create(title=speciality.get('title'), description=speciality.get('description'), photo=speciality.get('photo'))
 
     @staticmethod
     def delete(speciality_id):
-        return Speciality.objects.get(speciality_id).delete()
+        return Speciality.objects.get(id=speciality_id).delete()
 
 
 class PersonRepository(object):
@@ -31,7 +30,7 @@ class PersonRepository(object):
 
     @staticmethod
     def get(user_id):
-        return Person.objects.get(user_id)
+        return Person.objects.get(id=user_id)
 
     @staticmethod
     def create(person: dict):
@@ -43,7 +42,7 @@ class PersonRepository(object):
     @staticmethod
     def delete(user_id):
         try:
-            Person.objects.get(user_id).delete()
+            Person.objects.get(id=user_id).delete()
         except Exception as exception:
             return exception
 
@@ -70,8 +69,7 @@ class SpecialityService(object):
             self.speciality_repository.delete(speciality_id)
             return True
         except Exception as exception:
-            print(exception)
-            return False
+            return exception
 
     def create(self, speciality: dict):
         try:
