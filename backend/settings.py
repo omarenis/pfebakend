@@ -58,11 +58,14 @@ AUTH_USER_MODEL = 'gestionusers.Person'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'myproject',
+        'USER': 'root',
+        'PASSWORD': 'rootpassword',
+        'HOST': 'localhost',
+        'PORT': '',
     }
 }
-
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework_simplejwt.authentication.JWTAuthentication',
