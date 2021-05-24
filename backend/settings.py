@@ -1,5 +1,6 @@
 import os
 from pathlib import Path
+from corsheaders.defaults import default_headers
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -7,7 +8,13 @@ SECRET_KEY = 'django-insecure-=$9h=0+39ni%u&!r72&m$+$9q+4fkzhv^ccrnltva$vvvz=6ch
 
 DEBUG = True
 
-ALLOWED_HOSTS = ['*']
+CORS_ALLOW_HEADERS = list(default_headers) + [
+    'Access-Control-Allow-Origin',
+]
+ALLOWED_HOSTS = ["http://127.0.0.1", "http://localhost", ]
+CORS_ORIGIN_WHITELIST = ("http://127.0.0.1:4200", "http://localhost:4200", )
+
+CORS_ALLOW_CREDENTIALS = True
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -57,14 +64,22 @@ WSGI_APPLICATION = 'backend.wsgi.application'
 AUTH_USER_MODEL = 'gestionusers.Person'
 
 DATABASES = {
+
     'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'myproject',
+
+        'ENGINE': 'django.db.backends.postgresql',
+
+        'NAME': 'understandmeguideme',
+
         'USER': 'root',
-        'PASSWORD': 'rootpassword',
-        'HOST': 'localhost',
-        'PORT': '',
+
+        'PASSWORD': 'undertandmeguideme',
+
+        'HOST': '127.0.0.1',
+
+        'PORT': '5432',
     }
+
 }
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
