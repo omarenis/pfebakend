@@ -1,5 +1,6 @@
 import os
 from pathlib import Path
+
 from corsheaders.defaults import default_headers
 
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -11,8 +12,8 @@ DEBUG = True
 CORS_ALLOW_HEADERS = list(default_headers) + [
     'Access-Control-Allow-Origin',
 ]
-ALLOWED_HOSTS = ["http://127.0.0.1", "http://localhost", ]
-CORS_ORIGIN_WHITELIST = ("http://127.0.0.1:4200", "http://localhost:4200", )
+ALLOWED_HOSTS = ["http://127.0.0.1", "http://localhost", 'localhost']
+CORS_ORIGIN_WHITELIST = ("http://127.0.0.1:4200", "http://localhost:4200",)
 
 CORS_ALLOW_CREDENTIALS = True
 
@@ -64,9 +65,11 @@ WSGI_APPLICATION = 'backend.wsgi.application'
 AUTH_USER_MODEL = 'gestionusers.Person'
 
 DATABASES = {
-
     'default': {
-
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': 'db.sqlite3',
+    },
+    'postgresql': {
         'ENGINE': 'django.db.backends.postgresql',
 
         'NAME': 'understandmeguideme',

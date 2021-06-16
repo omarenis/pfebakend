@@ -5,11 +5,11 @@ from rest_framework.serializers import ModelSerializer
 
 
 class UserManager(BaseUserManager):
-    def create_user(self, name, familyName, cin, telephone, email, password):
+    def create_user(self, name, family_name, cin, telephone, email, password):
         try:
-            user = Person(name=name, familyName=familyName, cin=cin, telephone=telephone,
+            user = Person(name=name, familyName=family_name, cin=cin, telephone=telephone,
                           email=self.normalize_email(email), accountId=None)
-            user.username = name + ' ' + familyName
+            user.username = name + ' ' + family_name
             user.set_password(password)
             user.save()
             return user
