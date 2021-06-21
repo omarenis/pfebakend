@@ -3,7 +3,7 @@ from pathlib import Path
 
 from corsheaders.defaults import default_headers
 
-BASE_DIR = Path(__file__).resolve().parent.parent
+BASE_DIR = Path(__file__).resolve().parent
 
 SECRET_KEY = 'django-insecure-=$9h=0+39ni%u&!r72&m$+$9q+4fkzhv^ccrnltva$vvvz=6ch'
 
@@ -67,7 +67,7 @@ AUTH_USER_MODEL = 'gestionusers.Person'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': 'db.sqlite3',
+        'NAME': BASE_DIR.parent / 'db.sqlite3',
     },
     'postgresql': {
         'ENGINE': 'django.db.backends.postgresql',
@@ -115,6 +115,6 @@ USE_L10N = True
 
 USE_TZ = True
 STATIC_URL = '/static/'
-MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+MEDIA_ROOT = os.path.join(BASE_DIR.parent, 'media')
 MEDIA_URL = '/media/'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'

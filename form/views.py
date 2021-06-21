@@ -1,8 +1,43 @@
 from django.urls import path
 from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet
-from .models import DomainSerializer, PatientSerializer, QuestionSerializer, ResponseSerializer, ScoreSerializer
+from .models import AgeRangeSerializer, DomainSerializer, PatientSerializer, QuestionSerializer, ResponseSerializer, \
+    ScoreSerializer
 from .services import AgeRangeService, DomainService, PatientService, QuestionService, ResponseService, ScoreService
+
+
+class AgeRangeViewSet(ModelViewSet):
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+        self.service = AgeRangeService()
+
+    def list(self, request, *args, **kwargs):
+        age_range_list = self.service.list()
+        if len(age_range_list) == 0:
+            return Response(data={'response': 'pas de patients dans ce moment'}, status=200)
+        return Response(data=[PatientSerializer(i).data for i in age_range_list], status=200)
+
+    def create(self, request, *args, **kwargs):
+
+        if request.data.get("label") is None:
+            return Response(data={'error': 'label must be provided'}, status=400)
+        if request.data.get('minimumAge') is None:
+            return Response(data={'error': 'minimumAge must be provided'}, status=400)
+        if request.data.get('maximumAge') is None:
+            return Response(data={'error': 'maximumAge must be provided'}, status=400)
+        age_range = self.service.create(request.data)
+        if isinstance(age_range, Exception):
+            return Response(data={'error': str(age_range)}, status=500)
+        return Response(data=AgeRangeSerializer(age_range).data, status=201)
+
+    def delete(self, request, pk=None, *args, **kwargs):
+
+        if pk is None:
+            return Response(data={'error': 'id must not be null'}, status=400)
+        deleted = self.service.delete(pk)
+        if isinstance(deleted, Exception):
+            return Response(data={'error': str(deleted)}, status=400)
+        return Response(data={'response': True}, status=200)
 
 
 class PatientViewSet(ModelViewSet):
@@ -194,6 +229,15 @@ class ScoreViewSet(ModelViewSet):
         return Response(data={'response': True}, status=200)
 
 
+age_ranges = AgeRangeViewSet.as_view({
+    'get': 'list',
+    'post': 'create'
+})
+
+age_range = AgeRangeViewSet.as_view({
+    'delete': 'delete'
+})
+
 questions = QuestionViewSet.as_view({
     'get': 'list',
     'post': 'create'
@@ -231,5 +275,7 @@ urlpatterns = [
     path('domains', domains),
     path('domains/<int:pk>', domain),
     path('responses', responses),
-    path('scores', scores)
+    path('scores', scores),
+    path('ageRanges', age_ranges),
+    path('ageRanges/<int:pk>', age_range)
 ]
