@@ -1,107 +1,48 @@
-from .models import Speciality, Person
+from .models import Localisation, Speciality, Person
 from django.contrib.auth.hashers import check_password
+from common.services import Repository, Service
 
 
-class SpecialityRepository(object):
-
-    @staticmethod
-    def list():
-        return Speciality.objects.all()
-
-    @staticmethod
-    def retrieve(speciality_id):
-        return Speciality.objects.get(id=speciality_id)
-
-    @staticmethod
-    def create(speciality: dict):
-        print(speciality.get('title'))
-        return Speciality.objects.create(title=speciality.get('title'), description=speciality.get('description'), photo=speciality.get('photo'))
-
-    @staticmethod
-    def delete(speciality_id):
-        return Speciality.objects.get(id=speciality_id).delete()
+class LocalisationRepository(Repository):
+    def __init__(self, model=Localisation):
+        super().__init__(model)
 
 
-class PersonRepository(object):
-
-    @staticmethod
-    def list():
-        return Person.objects.all()
-
-    @staticmethod
-    def get(user_id):
-        return Person.objects.get(id=user_id)
-
-    @staticmethod
-    def create(person: dict):
-        person_object = Person.objects.create_user(name=person['name'], familyName=person['familyName'],
-                                                   cin=person['cin'], telephone=person['telephone'],
-                                                   password=person['password'], email=person['email'])
-        return person_object
-
-    @staticmethod
-    def delete(user_id):
-        try:
-            Person.objects.get(id=user_id).delete()
-        except Exception as exception:
-            return exception
+class LocalisationService(Service):
+    def __init__(self, repository=LocalisationRepository()):
+        super().__init__(repository)
 
 
-class SpecialityService(object):
-
-    def __init__(self):
-        self.speciality_repository = SpecialityRepository()
-
-    def list(self):
-        return self.speciality_repository.list()
-
-    def retrieve(self, speciality_id):
-        return self.speciality_repository.retrieve(speciality_id)
-
-    def add(self, speciality: dict):
-        try:
-            return self.speciality_repository.create(speciality=speciality)
-        except Exception as exception:
-            return exception
-
-    def delete(self, speciality_id):
-        try:
-            self.speciality_repository.delete(speciality_id)
-            return True
-        except Exception as exception:
-            return exception
-
-    def create(self, speciality: dict):
-        try:
-            return self.speciality_repository.create(speciality)
-        except Exception as exception:
-            return exception
+class SpecialityRepository(Repository):
+    def __init__(self, model=Speciality):
+        super().__init__(model)
 
 
-class PersonService(object):
+class PersonRepository(Repository):
 
-    def __init__(self):
-        self.person_repository = PersonRepository()
+    def __init__(self, model=Person):
+        super().__init__(model)
 
-    def list(self):
-        return self.person_repository.list()
 
-    def retrieve(self, user_id):
-        return self.person_repository.get(user_id)
+class SpecialityService(Service):
 
-    def add(self, person: dict):
-        try:
-            return self.person_repository.create(person=person)
-        except Exception as exception:
-            return exception
+    def __init__(self, repository=SpecialityRepository()):
+        super().__init__(repository=repository)
 
-    def delete(self, user_id):
-        try:
-            self.person_repository.delete(user_id)
-            return True
-        except Exception as exception:
-            print(exception)
-            return False
+
+class PersonService(Service):
+
+    def __init__(self, repository=PersonRepository()):
+        super().__init__(repository=repository)
+
+    def create(self, data: dict):
+        localisation = Localisation.objects.filter(**data['localisation'])
+        localisation = Localisation.objects.create(**data['localisation']) if localisation is None else localisation
+        if isinstance(localisation, Exception):
+            return localisation
+        else:
+            data['localisation'] = localisation.id
+            return super().create(data)
 
     @staticmethod
     def login(email, password):

@@ -1,0 +1,456 @@
+[
+  {
+    "governorate": "أريانة",
+    "delegations": [
+      {
+        "label": "رواد",
+        "localities": [
+          {
+            "label": "بو حناش",
+            "zip_code": 2081
+          },
+          {
+            "label": "منزل شاكر",
+            "zip_code": 2081
+          },
+          {
+            "label": "الجامع الكبير",
+            "zip_code": 2081
+          },
+          {
+            "label": "مدينةالمواقيات",
+            "zip_code": 2081
+          },
+          {
+            "label": "مدينة المواقيات",
+            "zip_code": 2081
+          },
+          {
+            "label": "مدينة المنتزه",
+            "zip_code": 2081
+          },
+          {
+            "label": "مدينة النور جعفر",
+            "zip_code": 2081
+          },
+          {
+            "label": "مدينة السّعادة",
+            "zip_code": 2081
+          },
+          {
+            "label": "مدينة سيدي سليمان",
+            "zip_code": 2081
+          },
+          {
+            "label": "مدينة سنيت",
+            "zip_code": 2081
+          },
+          {
+            "label": "دوار الهندي",
+            "zip_code": 2081
+          },
+          {
+            "label": "بلقايد حسين",
+            "zip_code": 2081
+          },
+          {
+            "label": "واد الخياط",
+            "zip_code": 2081
+          },
+          {
+            "label": "اقامة العيّاش",
+            "zip_code": 2081
+          },
+          {
+            "label": "اقامة اﻷنس",
+            "zip_code": 2081
+          },
+          {
+            "label": "اقامة النرجس",
+            "zip_code": 2081
+          },
+          {
+            "label": "مدينة الشرقي",
+            "zip_code": 2056
+          }
+        ]
+      },
+      {
+        "label": "سيدي  ثابت",
+        "localities": [
+          {
+            "label": "",
+            "zip_code": ""
+          }
+        ]
+      },
+      {
+        "label": "أريانة المدينة",
+        "localities": [
+          {
+            "label": "",
+            "zip_code": ""
+          }
+        ]
+      },
+      {
+        "label": "سكرة",
+        "localities": [
+          {
+            "label": "",
+            "zip_code": ""
+          }
+        ]
+      },
+      {
+        "label": "قلعة اﻷندلس",
+        "localities": [
+          {
+            "label": "",
+            "zip_code": ""
+          }
+        ]
+      },
+      {
+        "label": "",
+        "localities": [
+          {
+            "label": "",
+            "zip_code": ""
+          }
+        ]
+      },
+      {
+        "label": "منيهلة",
+        "localities": [
+          {
+            "label": "",
+            "zip_code": ""
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "governorate": "باجة",
+    "delegations": [
+      {
+        "label": "",
+        "localities": [
+          {
+            "label": "",
+            "zip_code": ""
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "governorate": "بن عروس",
+    "delegations": [
+      {
+        "label": "",
+        "localities": [
+          {
+            "label": "",
+            "zip_code": ""
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "governorate": "بنزرت",
+    "delegations": [
+      {
+        "label": "",
+        "localities": [
+          {
+            "label": "",
+            "zip_code": ""
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "governorate": "قابس",
+    "delegations": [
+      {
+        "label": "",
+        "localities": [
+          {
+            "label": "",
+            "zip_code": ""
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "governorate": "قفصة",
+    "delegations": [
+      {
+        "label": "",
+        "localities": [
+          {
+            "label": "",
+            "zip_code": ""
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "governorate": "جندوبة",
+    "delegations": [
+      {
+        "label": "",
+        "localities": [
+          {
+            "label": "",
+            "zip_code": ""
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "governorate": "قيروان",
+    "delegations": [
+      {
+        "label": "",
+        "localities": [
+          {
+            "label": "",
+            "zip_code": ""
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "governorate": "قصرين",
+    "delegations": [
+      {
+        "label": "",
+        "localities": [
+          {
+            "label": "",
+            "zip_code": ""
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "governorate": "قبلي",
+    "delegations": [
+      {
+        "label": "",
+        "localities": [
+          {
+            "label": "",
+            "zip_code": ""
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "governorate": "الكاف",
+    "delegations": [
+      {
+        "label": "",
+        "localities": [
+          {
+            "label": "",
+            "zip_code": ""
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "governorate": "المهدية",
+    "delegations": [
+      {
+        "label": "",
+        "localities": [
+          {
+            "label": "",
+            "zip_code": ""
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "governorate": "منوبة",
+    "delegations": [
+      {
+        "label": "",
+        "localities": [
+          {
+            "label": "",
+            "zip_code": ""
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "governorate": "مدنين",
+    "delegations": [
+      {
+        "label": "",
+        "localities": [
+          {
+            "label": "",
+            "zip_code": ""
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "governorate": "منستير",
+    "delegations": [
+      {
+        "label": "",
+        "localities": [
+          {
+            "label": "",
+            "zip_code": ""
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "governorate": "نابل",
+    "delegations": [
+      {
+        "label": "",
+        "localities": [
+          {
+            "label": "",
+            "zip_code": ""
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "governorate": "سيدي بوزيد",
+    "delegations": [
+      {
+        "label": "",
+        "localities": [
+          {
+            "label": "",
+            "zip_code": ""
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "governorate": "سليانة",
+    "delegations": [
+      {
+        "label": "",
+        "localities": [
+          {
+            "label": "",
+            "zip_code": ""
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "governorate": "سوسة",
+    "delegations": [
+      {
+        "label": "",
+        "localities": [
+          {
+            "label": "",
+            "zip_code": ""
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "governorate": "تطاوين",
+    "delegations": [
+      {
+        "label": "",
+        "localities": [
+          {
+            "label": "",
+            "zip_code": ""
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "governorate": "توزر",
+    "delegations": [
+      {
+        "label": "",
+        "localities": [
+          {
+            "label": "",
+            "zip_code": ""
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "governorate": "صفاقس",
+    "delegations": [
+      {
+        "label": "",
+        "localities": [
+          {
+            "label": "",
+            "zip_code": ""
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "governorate": "تونس",
+    "delegations": [
+      {
+        "label": "",
+        "localities": [
+          {
+            "label": "",
+            "zip_code": ""
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "governorate": "زغوان",
+    "delegations": [
+      {
+        "label": "",
+        "localities": [
+          {
+            "label": "",
+            "zip_code": ""
+          }
+        ]
+      }
+    ]
+  }
+]

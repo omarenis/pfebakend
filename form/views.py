@@ -1,131 +1,46 @@
 from django.urls import path
 from rest_framework.response import Response
-from rest_framework.viewsets import ModelViewSet
+
+from common.views import ViewSet
 from .models import AgeRangeSerializer, DomainSerializer, PatientSerializer, QuestionSerializer, ResponseSerializer, \
     ScoreSerializer
 from .services import AgeRangeService, DomainService, PatientService, QuestionService, ResponseService, ScoreService
 
 
-class AgeRangeViewSet(ModelViewSet):
-    def __init__(self, **kwargs):
-        super().__init__(**kwargs)
-        self.service = AgeRangeService()
-
-    def list(self, request, *args, **kwargs):
-        age_range_list = self.service.list()
-        if len(age_range_list) == 0:
-            return Response(data={'response': 'pas de patients dans ce moment'}, status=200)
-        return Response(data=[PatientSerializer(i).data for i in age_range_list], status=200)
-
-    def create(self, request, *args, **kwargs):
-
-        if request.data.get("label") is None:
-            return Response(data={'error': 'label must be provided'}, status=400)
-        if request.data.get('minimumAge') is None:
-            return Response(data={'error': 'minimumAge must be provided'}, status=400)
-        if request.data.get('maximumAge') is None:
-            return Response(data={'error': 'maximumAge must be provided'}, status=400)
-        age_range = self.service.create(request.data)
-        if isinstance(age_range, Exception):
-            return Response(data={'error': str(age_range)}, status=500)
-        return Response(data=AgeRangeSerializer(age_range).data, status=201)
-
-    def delete(self, request, pk=None, *args, **kwargs):
-
-        if pk is None:
-            return Response(data={'error': 'id must not be null'}, status=400)
-        deleted = self.service.delete(pk)
-        if isinstance(deleted, Exception):
-            return Response(data={'error': str(deleted)}, status=400)
-        return Response(data={'response': True}, status=200)
+class AgeRangeViewSet(ViewSet):
+    def __init__(self, service=AgeRangeService(), serializer_class=AgeRangeSerializer, error_message='',
+                 not_found_message='', required_fields=('label', 'minimumAge', 'maximumAge'),
+                 fields=('label', 'minimumAge', 'maximumAge'), **kwargs):
+        super().__init__(service=service, serializer_class=serializer_class, error_message=error_message,
+                         not_found_message=not_found_message, required_fields=required_fields, fields=fields, **kwargs)
 
 
-class PatientViewSet(ModelViewSet):
+class PatientViewSet(ViewSet):
 
-    def __init__(self, **kwargs):
-        super().__init__(**kwargs)
-        self.service = PatientService()
-
-    def list(self, request, *args, **kwargs):
-        patient_list = self.service.list()
-        if len(patient_list) == 0:
-            return Response(data={'response': 'pas de patients dans ce moment'}, status=200)
-        return Response(data=[PatientSerializer(i).data for i in patient_list], status=200)
-
-    def create(self, request, *args, **kwargs):
-        if request.data.get('age') is None:
-            return Response(data={'error': 'patient has age'}, status=400)
-        else:
-            patient_object = self.service.create(
-                {
-                    'age': request.data.get('age'),
-                    'person_id': request.data.get('person_id')
-                }
-            )
-            if isinstance(patient_object, Exception):
-                return Response(data={'error': str(patient_object)}, status=500)
-            return Response(data=PatientSerializer(patient_object).data, status=201)
+    def __init__(self, service=PatientService(), serializer_class=PatientSerializer, error_message='',
+                 not_found_message='', required_fields=('age',), fields=('age', 'person_id'), **kwargs):
+        super().__init__(service=service, serializer_class=serializer_class, error_message=error_message,
+                         not_found_message=not_found_message, required_fields=required_fields, fields=fields,
+                         **kwargs)
 
 
-class QuestionViewSet(ModelViewSet):
-    def __init__(self, **kwargs):
-        super().__init__(**kwargs)
-        self.question_service = QuestionService()
-
-    def list(self, request, *args, **kwargs):
-        question_list = self.question_service.list()
-        if len(question_list) == 0:
-            return Response(data=[], status=200)
-        return Response(data=[QuestionSerializer(i).data for i in question_list], status=200)
-
-    def create(self, request, *args, **kwargs):
-        if request.data.get('ageRange') is None:
-            return Response(data={'error': 'age range not provided'}, status=400)
-        elif request.data.get('domain') is None:
-            return Response(data={'error': 'domain not provided'}, status=400)
-        elif request.data.get('label') is None:
-            return Response(data={'error': 'label not provided'}, status=400)
-        else:
-            question_data = dict()
-            question_data['domain_id'] = request.data.get('domain')
-            question_data['ageRange_id'] = request.data.get('ageRange')
-            question_data['label'] = request.data.get('label')
-            question_object = self.question_service.create(question_data)
-            if isinstance(question_object, Exception):
-                return Response(data={'error': str(question_object)}, status=500)
-            return Response(data=QuestionSerializer(question_object).data, status=201)
-
-    def update(self, request, pk=None, *args, **kwargs):
-        if pk is None:
-            return Response(data={'error': 'id must not be null'}, status=400)
-        question_object = self.question_service.retrieve(_id=pk)
-        if question_object is None:
-            return Response(data={'error': 'question not found'}, status=404)
-        return Response(data=QuestionSerializer(question_object).data, status=201)
-
-    def delete(self, request, pk=None, *args, **kwargs):
-        if pk is None:
-            return Response(data={'error': 'id must not be null'}, status=400)
-        deleted = self.question_service.delete(pk)
-        if isinstance(deleted, Exception):
-            return Response(data={'error': str(deleted)}, status=400)
-        return Response(data={'response': True}, status=200)
+class QuestionViewSet(ViewSet):
+    def __init__(self, service=QuestionService(), serializer_class=QuestionSerializer, error_message='',
+                 not_found_message='', required_fields=('domain', 'ageRange', 'label'),
+                 fields=('domain', 'ageRange', 'label'), **kwargs):
+        super().__init__(service, serializer_class, error_message=error_message, not_found_message=not_found_message,
+                         required_fields=required_fields, fields=fields, **kwargs)
 
 
-class DomainViewSet(ModelViewSet):
-    def __init__(self, **kwargs):
-        super().__init__(**kwargs)
-        self.domain_service = DomainService()
+class DomainViewSet(ViewSet):
+    def __init__(self, service=DomainService(), serializer_class=DomainSerializer, error_message='',
+                 not_found_message='', required_fields=('name', ), fields=('name', ), **kwargs):
+        super().__init__(service=service, serializer_class=serializer_class, error_message=error_message,
+                         not_found_message=not_found_message, required_fields=required_fields, fields=fields, **kwargs)
         self.age_range_service = AgeRangeService()
 
-    def list(self, request, *args, **kwargs):
-        domain_list = self.domain_service.list()
-        if len(domain_list) == 0:
-            return Response(data={'response': 'pas de domaines dans ce moment'}, status=200)
-        return Response(data=[DomainSerializer(i).data for i in domain_list], status=200)
-
     def retrieve(self, request, pk=None, *args, **kwargs):
-        domain_object = self.domain_service.retrieve(pk)
+        domain_object = self.service.retrieve(pk)
         if domain_object is None:
             return Response(data={'error': 'domain not found'}, status=404)
         age = request.GET.get('age')
@@ -143,69 +58,20 @@ class DomainViewSet(ModelViewSet):
             return Response(data=response, status=200)
         return Response(data=DomainSerializer(domain_object).data, status=200)
 
-    def delete(self, request, pk=None, *args, **kwargs):
-        deleted = self.domain_service.delete(_id=pk)
-        if isinstance(deleted, Exception):
-            return Response(data={'error': str(deleted)}, status=400)
-        return Response(data={'response': True}, status=200)
+
+class ResponseViewSet(ViewSet):
+    def __init__(self, service=ResponseService(), serializer_class=ResponseSerializer, error_message='',
+                 not_found_message='', required_fields=('question_id', 'patient_id', 'value'),
+                 fields=('question_id', 'patient_id', 'value'), **kwargs):
+        super().__init__(service=service, serializer_class=serializer_class, error_message=error_message,
+                         not_found_message=not_found_message, required_fields=required_fields, fields=fields, **kwargs)
 
 
-class ResponseViewSet(ModelViewSet):
-    def __init__(self, **kwargs):
-        super().__init__(**kwargs)
-        self.service = ResponseService()
-
-    def list(self, request, *args, **kwargs):
-        response_list = self.service.list()
-        if len(response_list) == 0:
-            return Response(data={'response': 'pas de questions dans ce moment'}, status=200)
-        return Response(data=[DomainSerializer(i).data for i in response_list], status=200)
-
-    def retrieve(self, request, pk=None, *args, **kwargs):
-        response_object = self.service.retrieve(pk)
-        print(response_object)
-        if response_object is None:
-            return Response(data={'error': 'domain not found'}, status=404)
-        return Response(data=DomainSerializer(response_object).data, status=200)
-
-    def create(self, request, *args, **kwargs):
-        if request.data.get("question") is None:
-            return Response(data={'error': 'question must be provided'}, status=400)
-        if request.data.get('patient') is None:
-            return Response(data={'error': 'patient must be provided'}, status=400)
-        if request.data.get('value') is None:
-            return Response(data={'error': 'value must be provided'}, status=400)
-        response_data = dict(question_id=request.data.get('question'), patient_id=request.data.get('patient'),
-                             value=request.data.get('value'))
-        response_object = self.service.create(response_data)
-        if isinstance(response_object, Exception):
-            return Response(data={'error': str(response_object)}, status=500)
-        return Response(data=ResponseSerializer(response_object).data, status=201)
-
-    def delete(self, request, pk=None, *args, **kwargs):
-        deleted = self.service.delete(_id=pk)
-        if isinstance(deleted, Exception):
-            return Response(data={'error': str(deleted)}, status=400)
-        return Response(data={'response': True}, status=200)
-
-
-class ScoreViewSet(ModelViewSet):
-    def __init__(self, **kwargs):
-        super().__init__(**kwargs)
-        self.service = ScoreService()
-
-    def list(self, request, *args, **kwargs):
-        score_list = self.service.list(request.GET.get('patientId'))
-        if len(score_list) == 0:
-            return Response(data={'response': 'pas de scores dans ce moment'}, status=200)
-        return Response(data=[ScoreSerializer(i).data for i in score_list], status=200)
-
-    def retrieve(self, request, pk=None, *args, **kwargs):
-        score_object = self.service.retrieve(pk)
-        print(score_object)
-        if score_object is None:
-            return Response(data={'error': 'score not found'}, status=404)
-        return Response(data=ScoreSerializer(score_object).data, status=200)
+class ScoreViewSet(ViewSet):
+    def __init__(self, service=ScoreService(), serializer_class=ScoreSerializer, error_message='', not_found_message='',
+                 **kwargs):
+        super().__init__(service=service, serializer_class=serializer_class, error_message=error_message,
+                         not_found_message=not_found_message, **kwargs)
 
     def create(self, request, *args, **kwargs):
         print(request.data)
@@ -221,12 +87,6 @@ class ScoreViewSet(ModelViewSet):
         if isinstance(score_object, Exception):
             return Response(data={'error': str(score_object)}, status=500)
         return Response(data=ScoreSerializer(score_object).data, status=201)
-
-    def delete(self, request, pk=None, *args, **kwargs):
-        deleted = self.service.delete(_id=pk)
-        if isinstance(deleted, Exception):
-            return Response(data={'error': str(deleted)}, status=400)
-        return Response(data={'response': True}, status=200)
 
 
 age_ranges = AgeRangeViewSet.as_view({

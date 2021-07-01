@@ -1,34 +1,10 @@
+from common.services import Repository, Service
 from .models import Patient, Question, Domain, Response, AgeRange, Score
 
 
-class Repository(object):
-
-    def __init__(self, model):
-        self.model = model
-
-    def list(self):
-        return self.model.objects.all()
-
-    def retrieve(self, _id: int):
-        return self.model.objects.get(id=_id)
-
-    def create(self, data: dict):
-        try:
-            return self.model.objects.create(**data)
-        except Exception as exception:
-            return exception
-
-    def delete(self, _id: int):
-        try:
-            self.model.objects.get(id=_id).delete()
-            return None
-        except Exception as exception:
-            return exception
-
-
 class DomainRepository(Repository):
-    def __init__(self):
-        super().__init__(model=Domain)
+    def __init__(self, model=Domain):
+        super().__init__(model=model)
 
 
 class PatientRepository(Repository):
@@ -61,24 +37,6 @@ class AgeRangeRepository(Repository):
         return AgeRange.objects.filter(minimumAge__lte=age, maximumAge__gt=age).first()
 
 
-class Service(object):
-
-    def __init__(self, repository):
-        self.repository = repository
-
-    def list(self):
-        return self.repository.list()
-
-    def retrieve(self, _id: int):
-        return self.repository.retrieve(_id)
-
-    def create(self, data: dict):
-        return self.repository.create(data=data)
-
-    def delete(self, _id: int):
-        return self.repository.delete(_id)
-
-
 class DomainService(Service):
     def __init__(self, repository=DomainRepository()):
         super().__init__(repository=repository)
@@ -99,11 +57,11 @@ class ScoreService(Service):
     def __init__(self, repository=ScoreRepository()):
         super().__init__(repository)
 
-    def list(self, patientId=None):
-        if patientId is None:
+    def list(self, patient_id=None):
+        if patient_id is None:
             return super().list()
         else:
-            return self.repository.model.objects.filter(patient_id=patientId)
+            return self.repository.model.objects.filter(patient_id=patient_id)
 
 
 class PatientService(Service):

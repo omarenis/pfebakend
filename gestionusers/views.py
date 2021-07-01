@@ -1,37 +1,20 @@
 from django.urls import path
-from rest_framework import status
 from rest_framework.permissions import AllowAny, IsAdminUser, IsAuthenticated
 from rest_framework.response import Response
-from rest_framework.viewsets import ModelViewSet
-from .models import PersonSerializer, SpecialitySerializer
-from .services import PersonService, SpecialityService
 from rest_framework_simplejwt.tokens import RefreshToken
 
+from common.views import ViewSet
+from .models import PersonSerializer, SpecialitySerializer
+from .services import PersonService, SpecialityService
 
-class SpecialityViewSet(ModelViewSet):
+
+class SpecialityViewSet(ViewSet):
     def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.speciality_serializer = SpecialitySerializer
-        self.speciality_service = SpecialityService()
-
-    def list(self, request, **kwargs):
-        speciality_list = self.speciality_service.list()
-        response = []
-        if len(speciality_list) != 0:
-            for i in speciality_list:
-                response.append(self.speciality_serializer(i).data)
-        return Response(data=response, status=200)
-
-    def retrieve(self, request, pk=None, *args, **kwargs):
-        speciality = self.speciality_service.retrieve(pk)
-        if speciality is None:
-            return Response(data={"error": "user not found"}, status=404)
-        else:
-            return Response(data=self.speciality_serializer(data=speciality).data, status=200)
+        super().__init__(service=SpecialityService(), serializer_class=SpecialitySerializer,
+                         required_fields=('title', 'description', 'photo'), fields=('title', 'description', 'photo'),
+                         *args, **kwargs)
 
     def create(self, request, *args, **kwargs):
-        print(request.data.get('title'))
-        print(request.FILES.getlist('photo')[0])
         if request.data.get('title') is None:
             return Response(data={'error': 'title required'}, status=500)
         if request.data.get('description') is None:
@@ -39,21 +22,23 @@ class SpecialityViewSet(ModelViewSet):
         if request.FILES.getlist('photo') is None:
             return Response(data={'error': 'photo required'}, status=500)
         request.data['photo'] = request.FILES.getlist('photo')[0]
-        speciality_object = self.speciality_service.create(request.data)
+        speciality_object = self.service.create(request.data)
         if isinstance(speciality_object, Exception):
             return Response(data={'error': str(speciality_object)}, status=500)
         else:
             return Response(data=SpecialitySerializer(speciality_object).data, status=201)
 
-    def delete(self, request, pk=None, *args, **kwargs):
-        try:
-            self.speciality_service.delete(speciality_id=pk)
-            return Response(data={'response': True}, status=status.HTTP_200_OK)
-        except Exception as exception:
-            return Response(data={'error': str(exception)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
+class PersonViewSet(ViewSet):
 
-class PersonViewSet(ModelViewSet):
+    def __init__(self, service=SpecialityService(), serializer_class=PersonSerializer,
+                 required_fields=('name', 'family_name', 'cin', 'telephone', 'email', 'password'),
+                 fields=('name', 'family_name', 'cin', 'telephone', 'email', 'password', 'localisation_id'), **kwargs):
+        super().__init__(service=service, serializer_class=serializer_class, required_fields=required_fields,
+                         fields=fields, **kwargs)
+        self.person_serializer = PersonSerializer
+        self.person_service = PersonService()
+
     def get_permissions(self):
         permission_classes = []
         if self.action == 'list':
@@ -63,24 +48,6 @@ class PersonViewSet(ModelViewSet):
         elif self.action == 'signup' or self.action == 'login':
             permission_classes.append(AllowAny)
         return [permission() for permission in permission_classes if permission is not None]
-
-    def __init__(self, **kwargs):
-        super().__init__(**kwargs)
-        self.person_serializer = PersonSerializer
-        self.person_service = PersonService()
-
-    def list(self, request, **kwargs):
-        person_list = []
-        for i in self.person_service.list():
-            person_list.append(self.person_serializer(data=i).data)
-        return Response(data=person_list, status=200)
-
-    def retrieve(self, request, pk=None, *args, **kwargs):
-        user = self.person_service.retrieve(pk)
-        if user is None:
-            return Response(data={"error": "user not found"}, status=404)
-        else:
-            return Response(data=self.person_serializer(data=user).data, status=200)
 
     def login(self, request):
         email = request.data.get('email')
@@ -100,7 +67,7 @@ class PersonViewSet(ModelViewSet):
         })
 
     def signup(self, request):
-        user = self.person_service.add(request.data)
+        user = self.service.create(request.data)
         if isinstance(user, Exception):
             print(user)
             return Response(data={"error": str(user)}, status=500)
